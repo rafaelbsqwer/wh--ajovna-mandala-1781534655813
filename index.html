@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Čajovna s přes 80 druhy čajů ze světa. Klidná zenová atmosféra.">
+  <meta name="template-id" content="food-cajovna">
+  <title>Čajovna Mandala — Čaje z celého světa Praha 5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Noto+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --warm-white:   #f7f4ef;
+      --beige:        #eee8de;
+      --near-black:   #1c1c1a;
+      --dark-brown:   #3d3830;
+      --sage:         #6b8f71;
+      --light-sage:   #a3b899;
+      --warm-beige:   #c4a882;
+      --brown:        #8b7355;
+      --text:         #4a443c;
+      --text-light:   #7a7268;
+      --serif:        'Cormorant Garamond', Georgia, serif;
+      --sans:         'Noto Sans', system-ui, sans-serif;
+    }
+
+    html { overflow-x: hidden; scroll-behavior: auto; }
+
+    body {
+      background: var(--warm-white);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 2.1;
+      overflow-x: hidden;
+      font-weight: 300;
+    }
+
+    /* ── LOADER ───────────────────────────────────────────── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--warm-white);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      opacity: 0;
+      animation: loaderFadeIn 1.2s ease forwards;
+      transition: opacity .9s ease, visibility .9s ease;
+    }
+    #loader.hidden { opacity: 0 !important; visibility: hidden; pointer-events: none; }
+
+    @keyframes loaderFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .loader-name {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      color: var(--near-black);
+      letter-spacing: .06em;
+      font-weight: 300;
+    }
+    .loader-bar-wrap {
+      width: 180px; height: 1px;
+      background: rgba(107,143,113,.15);
+      overflow: hidden;
+    }
+    .loader-bar {
+      height: 100%; width: 0%;
+      background: var(--sage);
+      transition: width .3s ease;
+    }
+    .loader-label {
+      font-family: var(--sans);
+      font-size: .6rem;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      color: var(--sage);
+      font-weight: 400;
+    }
+
+    /* ── NAV ─────────────────────────────────────────────── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 1.8rem 5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background .5s, padding .5s, box-shadow .5s;
+    }
+    #nav.scrolled {
+      background: var(--warm-white);
+      padding: 1.1rem 5rem;
+      box-shadow: 0 1px 0 rgba(28,28,26,.08);
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.5rem;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: .04em;
+      font-weight: 300;
+      transition: color .5s;
+    }
+    #nav.scrolled .nav-logo { color: var(--near-black); }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 2.8rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--sans);
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      color: rgba(255,255,255,.75);
+      text-decoration: none;
+      font-weight: 400;
+      transition: color .3s;
+    }
+    #nav.scrolled .nav-links a { color: var(--text); }
+    .nav-links a:hover { color: var(--sage) !important; }
+
+    .nav-cta {
+      font-family: var(--sans);
+      font-size: .6rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: #fff !important;
+      border: 1px solid rgba(255,255,255,.4);
+      padding: .55rem 1.5rem;
+      transition: border-color .3s, color .3s, background .3s !important;
+    }
+    #nav.scrolled .nav-cta {
+      color: var(--near-black) !important;
+      border-color: var(--near-black);
+    }
+    .nav-cta:hover {
+      background: var(--sage) !important;
+      border-color: var(--sage) !important;
+      color: #fff !important;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 1px;
+      background: #fff;
+      transition: background .5s, transform .3s, opacity .3s;
+    }
+    #nav.scrolled .nav-hamburger span { background: var(--near-black); }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    .nav-mobile {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--warm-white);
+      z-index: 199;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+    }
+    .nav-mobile.open { display: flex; }
+    .nav-mobile a {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 2.2rem;
+      color: var(--near-black);
+      text-decoration: none;
+      font-weight: 300;
+    }
+    .nav-mobile a:hover { color: var(--sage); }
+
+    /* ── HERO ─────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      will-change: transform;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(28,28,26,.55);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 2rem;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: .6rem;
+      text-transform: uppercase;
+      letter-spacing: .3em;
+      color: var(--sage);
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(3rem, 5.5vw, 5.5rem);
+      color: #fff;
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: .02em;
+    }
+    .hero-line {
+      width: 70px; height: 1px;
+      background: var(--sage);
+      margin: 0 auto 1.5rem;
+    }
+    .hero-sub {
+      font-family: var(--sans);
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .25em;
+      color: rgba(255,255,255,.7);
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+    .hero-btns { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      font-family: var(--sans);
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: #fff;
+      background: var(--dark-brown);
+      border: 1px solid var(--dark-brown);
+      padding: .85rem 2.2rem;
+      text-decoration: none;
+      transition: background .3s, border-color .3s, color .3s;
+      font-weight: 400;
+    }
+    .btn-primary:hover { background: var(--sage); border-color: var(--sage); }
+    .btn-secondary {
+      font-family: var(--sans);
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: #fff;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.5);
+      padding: .85rem 2.2rem;
+      text-decoration: none;
+      transition: border-color .3s, background .3s;
+      font-weight: 400;
+    }
+    .btn-secondary:hover { border-color: #fff; background: rgba(255,255,255,.08); }
+
+    .hero-vertical {
+      position: absolute;
+      left: 3rem;
+      top: 50%;
+      transform: translateY(-50%) rotate(-90deg);
+      font-family: var(--sans);
+      font-size: .52rem;
+      text-transform: uppercase;
+      letter-spacing: .35em;
+      color: rgba(255,255,255,.3);
+      font-weight: 300;
+      white-space: nowrap;
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .6rem;
+      cursor: pointer;
+    }
+    .hero-scroll-text {
+      font-size: .52rem;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      color: rgba(255,255,255,.4);
+      font-weight: 300;
+    }
+    .hero-scroll-line {
+      width: 1px; height: 40px;
+      background: rgba(255,255,255,.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-scroll-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%; height: 100%;
+      background: var(--sage);
+      animation: scrollDrop 2s ease infinite;
+    }
+    @keyframes scrollDrop { 0% { top: -100%; } 100% { top: 100%; } }
+
+    /* ── SECTION SHARED ──────────────────────────────────── */
+    section { overflow: hidden; }
+    .section-inner { max-width: 1280px; margin: 0 auto; padding: 0 4rem; }
+    .section-num {
+      font-family: var(--serif);
+      font-size: clamp(6rem, 12vw, 11rem);
+      font-weight: 300;
+      color: rgba(107,143,113,.07);
+      line-height: 1;
+      position: absolute;
+      top: -1rem;
+      right: 3rem;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -.02em;
+    }
+
+    /* ── SECTION 01 — O NÁS ──────────────────────────────── */
+    #about {
+      padding: 9rem 0;
+      background: var(--warm-white);
+      position: relative;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 7rem;
+      align-items: start;
+    }
+    .about-img-wrap {
+      position: relative;
+    }
+    .about-img-wrap img {
+      width: 100%;
+      height: 580px;
+      object-fit: cover;
+      display: block;
+      border-left: 3px solid var(--sage);
+    }
+    .about-img-caption {
+      position: absolute;
+      bottom: -1.5rem;
+      right: -1.5rem;
+      width: 80px; height: 80px;
+      border: 1px solid var(--sage);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .about-img-caption span {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--sage);
+    }
+    .about-content { padding-top: 3rem; }
+    .section-tag {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: .58rem;
+      text-transform: uppercase;
+      letter-spacing: .28em;
+      color: var(--sage);
+      margin-bottom: 1.2rem;
+      font-weight: 400;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      color: var(--near-black);
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      letter-spacing: .01em;
+    }
+    .section-line {
+      width: 50px; height: 1px;
+      background: var(--sage);
+      margin-bottom: 2rem;
+      transform-origin: left;
+    }
+    .about-text {
+      color: var(--text);
+      line-height: 2.1;
+      margin-bottom: 2.5rem;
+      max-width: 480px;
+    }
+    .about-stats {
+      display: flex;
+      gap: 3rem;
+      margin-bottom: 2.8rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(107,143,113,.15);
+    }
+    .stat-item {}
+    .stat-num {
+      font-family: var(--serif);
+      font-size: 2rem;
+      color: var(--near-black);
+      font-weight: 300;
+      display: block;
+      line-height: 1;
+      margin-bottom: .3rem;
+    }
+    .stat-label {
+      font-size: .58rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--text-light);
+      font-weight: 300;
+    }
+    .btn-dark {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: #fff;
+      background: var(--near-black);
+      padding: .85rem 2.2rem;
+      text-decoration: none;
+      transition: background .3s;
+      font-weight: 400;
+    }
+    .btn-dark:hover { background: var(--dark-brown); }
+
+    /* ── SECTION 02 — NABÍDKA ────────────────────────────── */
+    #menu {
+      padding: 9rem 0;
+      background: var(--beige);
+      position: relative;
+    }
+    .menu-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .menu-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 4rem;
+      border-bottom: 1px solid rgba(107,143,113,.2);
+    }
+    .menu-tab {
+      font-family: var(--sans);
+      font-size: .6rem;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      color: var(--text-light);
+      padding: .9rem 2.5rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color .3s, border-color .3s;
+      font-weight: 400;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+    .menu-tab.active {
+      color: var(--sage);
+      border-bottom-color: var(--sage);
+    }
+    .menu-tab:hover { color: var(--sage); }
+    .menu-panel { display: none; }
+    .menu-panel.active { display: block; }
+    .menu-list { max-width: 800px; margin: 0 auto; }
+    .menu-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid rgba(107,143,113,.12);
+      align-items: start;
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item-left {}
+    .menu-item-name {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.35rem;
+      color: var(--near-black);
+      font-weight: 300;
+      display: block;
+      margin-bottom: .2rem;
+    }
+    .menu-item-origin {
+      font-size: .58rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--sage);
+      display: block;
+      margin-bottom: .6rem;
+      font-weight: 400;
+    }
+    .menu-item-desc {
+      color: var(--text-light);
+      font-size: .9rem;
+      line-height: 1.9;
+    }
+    .menu-item-price {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      color: var(--brown);
+      font-weight: 300;
+      white-space: nowrap;
+      padding-top: .2rem;
+    }
+
+    /* ── SECTION 03 — GALERIE ─────────────────────────────── */
+    #gallery {
+      padding: 9rem 0;
+      background: #fff;
+      position: relative;
+    }
+    .gallery-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3.5rem;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 60% 1fr;
+      grid-template-rows: 260px 260px;
+      gap: 1rem;
+    }
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-item:first-child {
+      grid-row: 1 / 3;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .8s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.04); }
+    .gallery-item-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(107,143,113,0);
+      transition: background .4s;
+    }
+    .gallery-item:hover .gallery-item-overlay {
+      background: rgba(107,143,113,.12);
+    }
+
+    /* ── SECTION 04 — PROČ MY ────────────────────────────── */
+    #why {
+      padding: 9rem 0;
+      background: var(--near-black);
+      position: relative;
+      overflow: hidden;
+    }
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4rem;
+      margin-bottom: 7rem;
+    }
+    .why-item {}
+    .why-num {
+      font-family: var(--serif);
+      font-size: 4rem;
+      color: var(--sage);
+      font-weight: 300;
+      display: block;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      opacity: .7;
+    }
+    .why-title {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.6rem;
+      color: #fff;
+      font-weight: 300;
+      margin-bottom: 1rem;
+    }
+    .why-desc {
+      color: rgba(255,255,255,.45);
+      line-height: 2;
+      font-size: .95rem;
+    }
+    .marquee-wrap {
+      border-top: 1px solid rgba(107,143,113,.15);
+      padding-top: 2.5rem;
+      overflow: hidden;
+    }
+    .marquee-track {
+      display: flex;
+      white-space: nowrap;
+      will-change: transform;
+    }
+    .marquee-text {
+      font-family: var(--sans);
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .3em;
+      color: var(--sage);
+      padding-right: 4rem;
+      font-weight: 300;
+      flex-shrink: 0;
+    }
+    .section-num-dark {
+      font-family: var(--serif);
+      font-size: clamp(6rem, 12vw, 11rem);
+      font-weight: 300;
+      color: rgba(107,143,113,.05);
+      line-height: 1;
+      position: absolute;
+      top: -1rem;
+      right: 3rem;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── SECTION 05 — REFERENCE ──────────────────────────── */
+    #testimonials {
+      padding: 9rem 0;
+      background: var(--beige);
+      position: relative;
+    }
+    .testi-header { text-align: center; margin-bottom: 5rem; }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+    .testi-card {
+      padding: 3rem 2.5rem;
+      background: var(--warm-white);
+      position: relative;
+    }
+    .testi-quote {
+      font-family: var(--serif);
+      font-size: 5rem;
+      color: var(--sage);
+      line-height: .6;
+      margin-bottom: 1.8rem;
+      display: block;
+      opacity: .5;
+      font-weight: 300;
+    }
+    .testi-text {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--near-black);
+      font-weight: 300;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    .testi-line {
+      width: 30px; height: 1px;
+      background: var(--sage);
+      margin-bottom: 1rem;
+    }
+    .testi-name {
+      font-size: .6rem;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    /* ── SECTION 06 — OTEVÍRACÍ DOBY ────────────────────── */
+    #hours {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 600px;
+    }
+    .hours-left {
+      background: var(--dark-brown);
+      padding: 7rem 5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .hours-tag {
+      font-size: .58rem;
+      text-transform: uppercase;
+      letter-spacing: .28em;
+      color: var(--light-sage);
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+    }
+    .hours-title {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 2.8rem;
+      color: #fff;
+      font-weight: 300;
+      margin-bottom: 3rem;
+      line-height: 1.2;
+    }
+    .hours-list { list-style: none; }
+    .hours-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      gap: 2rem;
+    }
+    .hours-row:last-child { border-bottom: none; }
+    .hours-day {
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: rgba(255,255,255,.5);
+      font-weight: 300;
+    }
+    .hours-time {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      color: #fff;
+      font-weight: 300;
+    }
+    .hours-right {
+      position: relative;
+      overflow: hidden;
+    }
+    .hours-right img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hours-right-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(28,28,26,.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      text-align: center;
+      padding: 3rem;
+    }
+    .hours-right-text {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.8rem;
+      color: #fff;
+      font-weight: 300;
+    }
+
+    /* ── SECTION 07 — KONTAKT ────────────────────────────── */
+    #contact {
+      padding: 9rem 0;
+      background: var(--warm-white);
+      position: relative;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 8rem;
+      align-items: start;
+    }
+    .contact-info {}
+    .contact-detail {
+      margin-bottom: 2.5rem;
+    }
+    .contact-detail-label {
+      font-size: .58rem;
+      text-transform: uppercase;
+      letter-spacing: .24em;
+      color: var(--sage);
+      display: block;
+      margin-bottom: .5rem;
+      font-weight: 400;
+    }
+    .contact-detail-value {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      color: var(--near-black);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+    .contact-detail-value a {
+      color: var(--near-black);
+      text-decoration: none;
+      transition: color .3s;
+    }
+    .contact-detail-value a:hover { color: var(--sage); }
+    .contact-form {}
+    .form-row { margin-bottom: 2rem; }
+    .form-row label {
+      display: block;
+      font-size: .58rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--text-light);
+      margin-bottom: .6rem;
+      font-weight: 400;
+    }
+    .form-row input,
+    .form-row textarea {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--sage);
+      background: transparent;
+      padding: .6rem 0;
+      font-family: var(--sans);
+      font-size: .95rem;
+      color: var(--near-black);
+      outline: none;
+      transition: border-color .3s;
+      font-weight: 300;
+    }
+    .form-row input:focus,
+    .form-row textarea:focus { border-bottom-color: var(--near-black); }
+    .form-row textarea { height: 100px; resize: none; }
+    .form-submit {
+      font-family: var(--sans);
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      color: #fff;
+      background: var(--near-black);
+      border: none;
+      padding: .9rem 2.5rem;
+      cursor: pointer;
+      transition: background .3s;
+      font-weight: 400;
+    }
+    .form-submit:hover { background: var(--sage); }
+    .form-success {
+      display: none;
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--sage);
+      margin-top: 1.5rem;
+      font-weight: 400;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────── */
+    footer {
+      background: var(--near-black);
+      padding: 4rem 0;
+      text-align: center;
+    }
+    .footer-inner { max-width: 1280px; margin: 0 auto; padding: 0 4rem; }
+    .footer-logo {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 2rem;
+      color: #fff;
+      font-weight: 300;
+      display: block;
+      margin-bottom: 1.5rem;
+      text-decoration: none;
+    }
+    .footer-line {
+      width: 40px; height: 1px;
+      background: var(--sage);
+      margin: 0 auto 1.5rem;
+    }
+    .footer-copy {
+      font-size: .58rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: rgba(255,255,255,.25);
+      font-weight: 300;
+    }
+
+    /* ── GSAP HIDDEN ─────────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(40px); }
+    .reveal-stagger { opacity: 0; transform: translateY(30px); }
+    .reveal-line { transform: scaleX(0); transform-origin: left; }
+    .reveal-img { overflow: hidden; }
+    .reveal-img img { transform: scale(1.1); }
+
+    /* ── RESPONSIVE ───────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .section-inner { padding: 0 3rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 4rem; }
+      .about-img-wrap img { height: 400px; }
+      .testi-grid { grid-template-columns: 1fr; max-width: 600px; margin: 0 auto; }
+      #hours { grid-template-columns: 1fr; }
+      .hours-right { min-height: 400px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 4rem; }
+    }
+    @media (max-width: 768px) {
+      #nav { padding: 1.4rem 2rem; }
+      #nav.scrolled { padding: .9rem 2rem; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .section-inner { padding: 0 1.8rem; }
+      #about, #menu, #gallery, #testimonials, #contact { padding: 6rem 0; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .why-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+      .gallery-item:first-child { grid-row: auto; }
+      .gallery-item { height: 280px; }
+      .menu-tabs { flex-wrap: wrap; gap: .5rem; border-bottom: none; }
+      .menu-tab { border: 1px solid rgba(107,143,113,.2); border-bottom: 2px solid transparent; border-radius: 0; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .hours-left { padding: 5rem 2rem; }
+      .hero-vertical { display: none; }
+      .about-stats { gap: 1.5rem; flex-wrap: wrap; }
+      .hero-title { font-size: clamp(2.2rem, 8vw, 3.5rem); }
+    }
+    @media (max-width: 480px) {
+      .menu-item { grid-template-columns: 1fr; }
+      .about-stats { gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-name">Čajovna Mandala</div>
+    <div class="loader-bar-wrap"><div class="loader-bar" id="loader-bar"></div></div>
+    <div class="loader-label">Připravujeme váš návrh webu</div>
+  </div>
+
+  <!-- NAV MOBILE -->
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="#about" onclick="closeMobile()">O nás</a>
+    <a href="#menu" onclick="closeMobile()">Čajový lístek</a>
+    <a href="#gallery" onclick="closeMobile()">Galerie</a>
+    <a href="#hours" onclick="closeMobile()">Otevírací doby</a>
+    <a href="#contact" onclick="closeMobile()">Kontakt</a>
+  </div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">Čajovna Mandala</a>
+    <ul class="nav-links">
+      <li><a href="#about">O nás</a></li>
+      <li><a href="#menu">Čajový lístek</a></li>
+      <li><a href="#gallery">Galerie</a></li>
+      <li><a href="#hours">Otevírací doby</a></li>
+      <li><a href="#contact" class="nav-cta">Přijďte si odpočinout</a></li>
+    </ul>
+    <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <video id="hero-video" muted playsinline preload="auto">
+      <source src="https://raw.githubusercontent.com/rafaelbsqwer/webhunter-assets/main/food-cajovna/video.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-vertical">ZEN · ČAJOVNA · KLID</div>
+    <div class="hero-content">
+      <span class="hero-tag">— Čajovna &amp; Zen prostor —</span>
+      <h1 class="hero-title">Oáza klidu v centru města</h1>
+      <div class="hero-line"></div>
+      <p class="hero-sub">Přes 80 druhů čajů z celého světa v zenové atmosféře</p>
+      <div class="hero-btns">
+        <a href="#menu" class="btn-primary">Prohlédnout lístek</a>
+        <a href="#contact" class="btn-secondary">Rezervovat místo</a>
+      </div>
+    </div>
+    <div class="hero-scroll" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+      <span class="hero-scroll-text">Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — O NÁS -->
+  <section id="about">
+    <div class="section-inner" style="position:relative;">
+      <span class="section-num">01</span>
+      <div class="about-grid">
+        <div class="about-img-wrap reveal-img">
+          <img src="https://raw.githubusercontent.com/rafaelbsqwer/webhunter-assets/main/food-cajovna/foto1.jpeg" alt="Interiér čajovny">
+          <div class="about-img-caption"><span>茶</span></div>
+        </div>
+        <div class="about-content">
+          <span class="section-tag">— Náš příběh —</span>
+          <h2 class="section-title reveal">Místo, kde<br>čas plyne jinak</h2>
+          <div class="section-line reveal-line"></div>
+          <p class="about-text reveal">Čajovna Mandala je místo kde zpomalíte a vychutnáte si okamžik. Nabízíme přes 80 druhů čajů z Číny, Japonska a Indie.</p>
+          <div class="about-stats reveal">
+            <div class="stat-item">
+              <span class="stat-num">80+</span>
+              <span class="stat-label">druhů čajů</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-num">15</span>
+              <span class="stat-label">let tradice</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-num">denně</span>
+              <span class="stat-label">čerstvé</span>
+            </div>
+          </div>
+          <a href="#contact" class="btn-dark reveal">Navštívit nás</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — NABÍDKA -->
+  <section id="menu">
+    <div class="section-inner" style="position:relative;">
+      <span class="section-num">02</span>
+      <div class="menu-header">
+        <span class="section-tag">— Výběr čajů —</span>
+        <h2 class="section-title reveal" style="text-align:center;">Náš čajový lístek</h2>
+      </div>
+      <div class="menu-tabs">
+        <button class="menu-tab active" data-tab="zelene">Zelené čaje</button>
+        <button class="menu-tab" data-tab="bile">Bílé &amp; žluté</button>
+        <button class="menu-tab" data-tab="fermentovane">Fermentované</button>
+      </div>
+
+      <!-- Panel: Zelené čaje -->
+      <div class="menu-panel active" id="panel-zelene">
+        <div class="menu-list">
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Zelené a bílé čaje</span>
+              <span class="menu-item-origin">Japonsko · Uji, Kjóto</span>
+              <span class="menu-item-desc">Japonský matcha a čínský Dragon Well nejvyšší kvality.</span>
+            </div>
+            <span class="menu-item-price">95 Kč</span>
+          </div>
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Gyokuro Asahi</span>
+              <span class="menu-item-origin">Japonsko · Yame, Fukuoka</span>
+              <span class="menu-item-desc">Stínovaný zelený čaj s výjimečně sladkou, umami chutí a minimální hořkostí. Jeden z nejprestižnějších japonských čajů.</span>
+            </div>
+            <span class="menu-item-price">120 Kč</span>
+          </div>
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Longjing Dragon Well</span>
+              <span class="menu-item-origin">Čína · Hangzhou, Zhejiang</span>
+              <span class="menu-item-desc">Legendární čínský zelený čaj s charakteristickým plochým listem. Oříšková aroma s jemnou zelenkavou svěžestí.</span>
+            </div>
+            <span class="menu-item-price">85 Kč</span>
+          </div>
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Černé a oolong čaje</span>
+              <span class="menu-item-origin">Japonsko · Shizuoka</span>
+              <span class="menu-item-desc">Darjeeling a Tie Guan Yin pro náročné.</span>
+            </div>
+            <span class="menu-item-price">75 Kč</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Bílé & žluté -->
+      <div class="menu-panel" id="panel-bile">
+        <div class="menu-list">
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Bai Hao Yin Zhen</span>
+              <span class="menu-item-origin">Čína · Fujian, Fuding</span>
+              <span class="menu-item-desc">Zlatý standard bílých čajů. Pouze pupeny pokryté stříbristými chloupky, jemná medoná chuť s květinovými tóny.</span>
+            </div>
+            <span class="menu-item-price">110 Kč</span>
+          </div>
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Bai Mu Dan</span>
+              <span class="menu-item-origin">Čína · Fujian</span>
+              <span class="menu-item-desc">Bílý čaj s pupeny i lístky. Komplexnější než Silver Needle, s ovocnými a dřevitými podtóny.</span>
+            </div>
+            <span class="menu-item-price">90 Kč</span>
+          </div>
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Bylinné směsi</span>
+              <span class="menu-item-origin">Čína · Hunan</span>
+              <span class="menu-item-desc">Domácí směsi pro relaxaci a dobrý spánek.</span>
+            </div>
+            <span class="menu-item-price">160 Kč</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Fermentované -->
+      <div class="menu-panel" id="panel-fermentovane">
+        <div class="menu-list">
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Sheng Pu-erh 2018</span>
+              <span class="menu-item-origin">Čína · Yunnan, Menghai</span>
+              <span class="menu-item-desc">Živý, přirozeně fermentovaný pu-erh z prémiové oblasti. Zemitá, komplexní chuť s bylinkovými podtóny. Zraje jako víno.</span>
+            </div>
+            <span class="menu-item-price">130 Kč</span>
+          </div>
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Shou Pu-erh Tuo Cha</span>
+              <span class="menu-item-origin">Čína · Yunnan</span>
+              <span class="menu-item-desc">Uměle zrající pu-erh s charakteristickým zemitým profilem. Sametová chuť, ideální pro podzimní dny.</span>
+            </div>
+            <span class="menu-item-price">85 Kč</span>
+          </div>
+          <div class="menu-item reveal-stagger">
+            <div class="menu-item-left">
+              <span class="menu-item-name">Hei Cha Anhua</span>
+              <span class="menu-item-origin">Čína · Hunan, Anhua</span>
+              <span class="menu-item-desc">Tmavý čaj s výraznou, robustní chutí. Specifický výrobní proces propůjčuje unikátní dřevitý charakter.</span>
+            </div>
+            <span class="menu-item-price">95 Kč</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — GALERIE -->
+  <section id="gallery">
+    <div class="section-inner" style="position:relative;">
+      <span class="section-num">03</span>
+      <div class="gallery-header">
+        <div>
+          <span class="section-tag">— Atmosféra —</span>
+          <h2 class="section-title reveal">Nahlédněte<br>k nám</h2>
+        </div>
+        <a href="#contact" class="btn-dark reveal" style="flex-shrink:0;">Rezervovat místo</a>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item reveal-img">
+          <img src="https://raw.githubusercontent.com/rafaelbsqwer/webhunter-assets/main/food-cajovna/foto1.jpeg" alt="Čajovna interiér">
+          <div class="gallery-item-overlay"></div>
+        </div>
+        <div class="gallery-item reveal-img">
+          <img src="https://raw.githubusercontent.com/rafaelbsqwer/webhunter-assets/main/food-cajovna/foto2.jpeg" alt="Příprava čaje">
+          <div class="gallery-item-overlay"></div>
+        </div>
+        <div class="gallery-item reveal-img">
+          <img src="https://raw.githubusercontent.com/rafaelbsqwer/webhunter-assets/main/food-cajovna/foto3.jpeg" alt="Čajové nádobí">
+          <div class="gallery-item-overlay"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 04 — PROČ MY -->
+  <section id="why">
+    <div class="section-inner" style="position:relative;">
+      <span class="section-num-dark">04</span>
+      <div style="text-align:center; margin-bottom:5rem;">
+        <span class="section-tag" style="color:var(--light-sage);">— Naše hodnoty —</span>
+        <h2 class="section-title reveal" style="color:#fff;">Proč zvolit<br>právě nás</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-item reveal-stagger">
+          <span class="why-num">01</span>
+          <h3 class="why-title">80+ druhů čajů</h3>
+          <p class="why-desc">Každý čaj pochází přímo od prověřených pěstitelů. Žádné prostředníky, žádné kompromisy. Jen čistá, autentická kvalita z nejlepších čajových zahrad světa.</p>
+        </div>
+        <div class="why-item reveal-stagger">
+          <span class="why-num">02</span>
+          <h3 class="why-title">Čajový ceremoniál</h3>
+          <p class="why-desc">Náš prostor je navržen jako oáza klidu uprostřed města. Zen estetika, tiché kouty, absence spěchu. Přijďte odpočinout mysl i tělo.</p>
+        </div>
+        <div class="why-item reveal-stagger">
+          <span class="why-num">03</span>
+          <h3 class="why-title">Zenová atmosféra</h3>
+          <p class="why-desc">Naši čajoví mistři vám rádi poradí s výběrem, vysvětlí původ čaje a ukáží správnou přípravu. Každá návštěva je malá vzdělávací cesta.</p>
+        </div>
+      </div>
+      <div class="marquee-wrap">
+        <div class="marquee-track" id="marquee-track">
+          <span class="marquee-text">ČERSTVÝ ČAJ · ZEN ATMOSFÉRA · KLID A POHODA · VÍCE NEŽ 80 DRUHŮ · </span>
+          <span class="marquee-text">ČERSTVÝ ČAJ · ZEN ATMOSFÉRA · KLID A POHODA · VÍCE NEŽ 80 DRUHŮ · </span>
+          <span class="marquee-text">ČERSTVÝ ČAJ · ZEN ATMOSFÉRA · KLID A POHODA · VÍCE NEŽ 80 DRUHŮ · </span>
+          <span class="marquee-text">ČERSTVÝ ČAJ · ZEN ATMOSFÉRA · KLID A POHODA · VÍCE NEŽ 80 DRUHŮ · </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 05 — REFERENCE -->
+  <section id="testimonials">
+    <div class="section-inner" style="position:relative;">
+      <span class="section-num">05</span>
+      <div class="testi-header">
+        <span class="section-tag">— Hosté říkají —</span>
+        <h2 class="section-title reveal">Jejich slova<br>jsou naší odměnou</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card reveal-stagger">
+          <span class="testi-quote">"</span>
+          <p class="testi-text">Nejklidnější místo v Praze. Přijdu vždy když potřebuji vypnout.</p>
+          <div class="testi-line"></div>
+          <span class="testi-name">— Eva K., Praha 5</span>
+        </div>
+        <div class="testi-card reveal-stagger">
+          <span class="testi-quote">"</span>
+          <p class="testi-text">Výběr čajů je ohromující a obsluha poradí s výběrem.</p>
+          <div class="testi-line"></div>
+          <span class="testi-name">— Jan H., Praha 4</span>
+        </div>
+        <div class="testi-card reveal-stagger">
+          <span class="testi-quote">"</span>
+          <p class="testi-text">Toto místo mě naučilo zpomalit. Každé odpoledne strávené s šálkem Gyokuro je meditací. Atmosféra je jedinečná, personál nesmírně laskavý.</p>
+          <div class="testi-line"></div>
+          <span class="testi-name">Markéta V. — Návštěvnice</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 06 — OTEVÍRACÍ DOBY -->
+  <section id="hours">
+    <div class="hours-left">
+      <span class="hours-tag">— Kdy nás najdete —</span>
+      <h2 class="hours-title reveal" style="color:#fff;">Otevírací<br>doby</h2>
+      <div class="section-line reveal-line" style="background:var(--light-sage); margin-bottom:2.5rem;"></div>
+      <ul class="hours-list">
+        <li class="hours-row reveal-stagger">
+          <span class="hours-day">Pondělí — Pátek</span>
+          <span class="hours-time">10:00 — 21:00</span>
+        </li>
+        <li class="hours-row reveal-stagger">
+          <span class="hours-day">Sobota</span>
+          <span class="hours-time">11:00 — 22:00</span>
+        </li>
+        <li class="hours-row reveal-stagger">
+          <span class="hours-day">Neděle</span>
+          <span class="hours-time">12:00 — 20:00</span>
+        </li>
+        <li class="hours-row reveal-stagger">
+          <span class="hours-day">Svátky</span>
+          <span class="hours-time">Dle oznámení</span>
+        </li>
+      </ul>
+    </div>
+    <div class="hours-right">
+      <img src="https://raw.githubusercontent.com/rafaelbsqwer/webhunter-assets/main/food-cajovna/foto2.jpeg" alt="Čajovna">
+      <div class="hours-right-overlay">
+        <p class="hours-right-text">Přijďte<br>kdykoli</p>
+        <div style="width:40px;height:1px;background:var(--sage);"></div>
+        <a href="#contact" class="btn-secondary">Rezervovat místo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 07 — KONTAKT -->
+  <section id="contact">
+    <div class="section-inner" style="position:relative;">
+      <span class="section-num">07</span>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <span class="section-tag">— Najdete nás —</span>
+          <h2 class="section-title reveal">Jsme tu<br>pro vás</h2>
+          <div class="section-line reveal-line"></div>
+          <div class="contact-detail reveal">
+            <span class="contact-detail-label">Adresa</span>
+            <span class="contact-detail-value"></span>
+          </div>
+          <div class="contact-detail reveal">
+            <span class="contact-detail-label">Telefon</span>
+            <span class="contact-detail-value"><a href="tel:+420777111004">+420777111004</a></span>
+          </div>
+          <div class="contact-detail reveal">
+            <span class="contact-detail-label">E-mail</span>
+            <span class="contact-detail-value"><a href="mailto:weboviny@email.cz">weboviny@email.cz</a></span>
+          </div>
+        </div>
+        <div class="contact-form reveal">
+          <form id="contact-form" onsubmit="handleForm(event)">
+            <div class="form-row">
+              <label for="f-name">Jméno</label>
+              <input type="text" id="f-name" name="name" required placeholder="Vaše jméno">
+            </div>
+            <div class="form-row">
+              <label for="f-email">E-mail</label>
+              <input type="email" id="f-email" name="email" required placeholder="vas@email.cz">
+            </div>
+            <div class="form-row">
+              <label for="f-msg">Zpráva</label>
+              <textarea id="f-msg" name="message" required placeholder="Napište nám..."></textarea>
+            </div>
+            <button type="submit" class="form-submit">Odeslat zprávu</button>
+            <p class="form-success" id="form-success">Zpráva odeslána — brzy se ozveme.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <a href="#" class="footer-logo">Čajovna Mandala</a>
+      <div class="footer-line"></div>
+      <p class="footer-copy">&copy; 2025 Čajovna Mandala — Všechna práva vyhrazena</p>
+    </div>
+  </footer>
+
+  <!-- GSAP + Lenis -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <script>
+    // ── LOADER ─────────────────────────────────────────────
+    (function(){
+      var bar = document.getElementById('loader-bar');
+      var loader = document.getElementById('loader');
+      var progress = 0;
+      var done = false;
+
+      function finish(){
+        if(done) return;
+        done = true;
+        bar.style.width = '100%';
+        setTimeout(function(){
+          loader.classList.add('hidden');
+          document.body.style.overflow = '';
+        }, 500);
+      }
+
+      document.body.style.overflow = 'hidden';
+
+      var iv = setInterval(function(){
+        progress += Math.random() * 18;
+        if(progress > 90) { clearInterval(iv); progress = 90; }
+        bar.style.width = progress + '%';
+      }, 200);
+
+      var video = document.getElementById('hero-video');
+      if(video){
+        video.addEventListener('loadeddata', finish, {once:true});
+        video.addEventListener('canplaythrough', finish, {once:true});
+      }
+
+      setTimeout(finish, 4000);
+    })();
+
+    // ── NAV SCROLL ─────────────────────────────────────────
+    (function(){
+      var nav = document.getElementById('nav');
+      window.addEventListener('scroll', function(){
+        if(window.scrollY > 60){ nav.classList.add('scrolled'); }
+        else { nav.classList.remove('scrolled'); }
+      }, {passive:true});
+    })();
+
+    // ── HAMBURGER ──────────────────────────────────────────
+    function toggleMobile(){
+      var hb = document.getElementById('hamburger');
+      var mob = document.getElementById('nav-mobile');
+      hb.classList.toggle('open');
+      mob.classList.toggle('open');
+      document.body.style.overflow = mob.classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMobile(){
+      document.getElementById('hamburger').classList.remove('open');
+      document.getElementById('nav-mobile').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // ── TABS ───────────────────────────────────────────────
+    (function(){
+      var tabs = document.querySelectorAll('.menu-tab');
+      tabs.forEach(function(tab){
+        tab.addEventListener('click', function(){
+          tabs.forEach(function(t){ t.classList.remove('active'); });
+          document.querySelectorAll('.menu-panel').forEach(function(p){ p.classList.remove('active'); });
+          tab.classList.add('active');
+          var target = document.getElementById('panel-' + tab.dataset.tab);
+          if(target){ target.classList.add('active'); }
+        });
+      });
+    })();
+
+    // ── FORM ───────────────────────────────────────────────
+    function handleForm(e){
+      e.preventDefault();
+      var btn = e.target.querySelector('.form-submit');
+      var success = document.getElementById('form-success');
+      btn.textContent = 'Odesílám...';
+      btn.disabled = true;
+      setTimeout(function(){
+        btn.textContent = 'Odesláno';
+        success.style.display = 'block';
+      }, 900);
+    }
+
+    // ── LENIS + GSAP ───────────────────────────────────────
+    window.addEventListener('load', function(){
+      var lenis;
+      try {
+        lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+        gsap.ticker.add(function(time){ lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      } catch(e){}
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Hero video — scroll-driven timeline (desktop) / autoplay loop (mobile)
+      var heroVideo = document.getElementById('hero-video');
+      if(heroVideo){
+        var isMobile = window.innerWidth < 768;
+
+        if(isMobile){
+          heroVideo.setAttribute('autoplay','');
+          heroVideo.setAttribute('loop','');
+          heroVideo.play().catch(function(){});
+        } else {
+          // Parallax: video element moves up as hero scrolls out
+          gsap.to(heroVideo, {
+            yPercent: 20,
+            ease: 'none',
+            scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+          });
+
+          // Scroll-driven currentTime scrub
+          // Wait for duration to be known, then build the scrub
+          function setupVideoScrub(){
+            if(!heroVideo.duration) return;
+
+            // Seek to frame 0 and keep paused
+            heroVideo.currentTime = 0;
+
+            var proxy = { t: 0 };
+            gsap.to(proxy, {
+              t: heroVideo.duration,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: '#hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: 1,
+                onUpdate: function(self){
+                  heroVideo.currentTime = self.progress * heroVideo.duration;
+                }
+              }
+            });
+          }
+
+          if(heroVideo.readyState >= 1){
+            setupVideoScrub();
+          } else {
+            heroVideo.addEventListener('loadedmetadata', setupVideoScrub, {once: true});
+            // Kick off loading (preload="auto" should handle it, but be explicit)
+            heroVideo.load();
+          }
+        }
+      }
+
+      // Reveal elements
+      document.querySelectorAll('.reveal').forEach(function(el){
+        gsap.fromTo(el, { opacity:0, y:40 }, {
+          opacity:1, y:0, duration:1.2, ease:'power2.out',
+          scrollTrigger: { trigger: el, start:'top 85%', toggleActions:'play none none none' }
+        });
+      });
+
+      // Stagger groups
+      var staggerParents = [];
+      document.querySelectorAll('.reveal-stagger').forEach(function(el){
+        var parent = el.parentElement;
+        if(!staggerParents.includes(parent)) staggerParents.push(parent);
+      });
+      staggerParents.forEach(function(parent){
+        var children = parent.querySelectorAll('.reveal-stagger');
+        gsap.fromTo(children, { opacity:0, y:30 }, {
+          opacity:1, y:0, duration:1.1, ease:'power2.out', stagger:0.15,
+          scrollTrigger: { trigger: parent, start:'top 80%', toggleActions:'play none none none' }
+        });
+      });
+
+      // Lines
+      document.querySelectorAll('.reveal-line').forEach(function(el){
+        gsap.fromTo(el, { scaleX:0 }, {
+          scaleX:1, duration:1.3, ease:'power2.out',
+          scrollTrigger: { trigger: el, start:'top 88%', toggleActions:'play none none none' }
+        });
+      });
+
+      // Images parallax + reveal
+      document.querySelectorAll('.reveal-img').forEach(function(wrap){
+        var img = wrap.querySelector('img');
+        if(!img) return;
+        gsap.fromTo(wrap, { clipPath:'inset(100% 0 0 0)' }, {
+          clipPath:'inset(0% 0 0 0)', duration:1.4, ease:'power3.out',
+          scrollTrigger: { trigger: wrap, start:'top 80%', toggleActions:'play none none none' }
+        });
+        gsap.fromTo(img, { scale:1.12 }, {
+          scale:1, duration:1.4, ease:'power3.out',
+          scrollTrigger: { trigger: wrap, start:'top 80%', toggleActions:'play none none none' }
+        });
+      });
+
+      // Marquee GSAP infinite
+      var track = document.getElementById('marquee-track');
+      if(track){
+        var totalW = track.scrollWidth / 2;
+        gsap.to(track, {
+          x: '-=' + totalW,
+          duration: totalW / 60,
+          ease: 'none',
+          repeat: -1,
+          modifiers: {
+            x: gsap.utils.unitize(function(x){ return parseFloat(x) % totalW; })
+          }
+        });
+      }
+    });
+  </script>
+
+  <!-- TRACKING -->
+  <script>
+    fetch('http://localhost:3000/t/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({siteId:'wh--ajovna-mandala-1781534655813'})}).catch(function(){});
+  </script>
+</body>
+</html>
